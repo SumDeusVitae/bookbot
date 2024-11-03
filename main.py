@@ -1,22 +1,54 @@
-path = "books/frankenstein.txt"
 def main():
+    book_path = "books/frankenstein.txt"
+    text = get_book_text(book_path)
+    num_words = get_num_words(text)
+    chars_dict = get_chars_dict(text)
+    chars_sorted_list = chars_dict_to_sorted_list(chars_dict)
+
+    print(f"--- Begin report of {book_path} ---")
+    print(f"{num_words} words found in the document")
+    print()
+
+    for item in chars_sorted_list:
+        if not item["char"].isalpha():
+            continue
+        print(f"The '{item['char']}' character was found {item['num']} times")
+
+    print("--- End report ---")
+
+
+def get_num_words(text):
+    words = text.split()
+    return len(words)
+
+
+def sort_on(d):
+    return d["num"]
+
+
+def chars_dict_to_sorted_list(num_chars_dict):
+    sorted_list = []
+    for ch in num_chars_dict:
+        sorted_list.append({"char": ch, "num": num_chars_dict[ch]})
+    sorted_list.sort(reverse=True, key=sort_on)
+    return sorted_list
+
+
+def get_chars_dict(text):
+    chars = {}
+    for c in text:
+        lowered = c.lower()
+        if lowered in chars:
+            chars[lowered] += 1
+        else:
+            chars[lowered] = 1
+    return chars
+
+
+
+def get_book_text(path):
     with open(path) as f:
-        file_contents = f.read()
-        print(f"--- Begin report of {path} ---")
-        words = file_contents.split()
-        print(f"{len(words)} words found in the document")
-        print()
-        lower_content = file_contents.lower()
-        d = {}
-        for each in lower_content:
-            if each in d:
-                d[each] += 1
-            else:
-                d[each] = 1
-        sorted_d = sorted(d.items(), key = lambda x: x[1], reverse= True)
-        for each in sorted_d:
-            if each[0].isalpha():
-                print(f"The '{each[0]}' character was found {each[1]} times")
-        print("--- End report ---")
+        return f.read()
+
 
 main()
